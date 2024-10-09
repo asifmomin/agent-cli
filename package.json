@@ -5,9 +5,11 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node --quiet src/cli.ts",
-    "agent1": "ts-node src/cli.ts agent1",
-    "agent2": "ts-node src/cli.ts agent2"
+    "start": "tsc && ts-node --quiet src/cli.ts",
+    "agent1": "tsc && ts-node src/cli.ts agent1",
+    "agent2": "tsc && ts-node src/cli.ts agent2",
+    "agent3": "tsc && ts-node src/cli.ts agent3",
+    "agent4": "tsc && ts-node src/cli.ts agent4"
   },
   "bin": {
     "agent-cli": "./src/cli.ts"

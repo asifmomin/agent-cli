@@ -1,4 +1,4 @@
-export const getWeather = async ()=>{
+export const getCurrentWeather = async ()=>{
     let weather = {
         temperature:"18",
         unit:"C",
