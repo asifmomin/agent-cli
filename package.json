@@ -10,7 +10,8 @@
     "agent2": "tsc && ts-node src/cli.ts agent2",
     "agent3": "tsc && ts-node src/cli.ts agent3",
     "agent4": "tsc && ts-node src/cli.ts agent4",
-    "agent5": "tsc && ts-node src/cli.ts agent5"
+    "agent5": "tsc && ts-node src/cli.ts agent5",
+    "agent6": "tsc && ts-node src/cli.ts agent6"
   },
   "bin": {
     "agent-cli": "./src/cli.ts"

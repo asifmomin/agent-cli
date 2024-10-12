@@ -4,6 +4,7 @@ import {agent2Command} from './commands/agent2';
 import {agent3Command} from "./commands/agent3";
 import {agent4Command} from "./commands/agent4";
 import {agent5Command} from "./commands/agent5";
+import {agent6Command} from "./commands/agent6";
 
 const program = new Command();
 
@@ -18,5 +19,6 @@ program.addCommand(agent2Command);
 program.addCommand(agent3Command);
 program.addCommand(agent4Command);
 program.addCommand(agent5Command);
+program.addCommand(agent6Command);
 
 program.parse(process.argv);
