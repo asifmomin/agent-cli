@@ -7,7 +7,8 @@ Goal : Build a agent that provides me activities I can do at my current location
  */
 export const agent2Command = new Command('agent2')
     .description('Agent2')
-    .action(async (prompt: string) => {
-        const myPrompt = `Give me list of activity based on my current location: ${await getLocation()} and weather : ${await getCurrentWeather()}`
+    .argument('<location>', 'Location to get activities for')
+    .action(async (location: string) => {
+        const myPrompt = `Give me list of activity based on my current location: ${location} and weather : ${await getCurrentWeather()}`
         await callLLM(myPrompt);
     });
