@@ -2,6 +2,7 @@ import {systemPrompt} from "./systemPrompt";
 import {getCurrentWeather, getLocation} from "../tools";
 import {OpenAI} from "openai";
 import {ChatCompletionMessageParam} from "openai/src/resources/chat/completions";
+import { ConsoleFormatter } from '../utils/consoleFormatter';
 
 /**
  * PLAN:
@@ -26,8 +27,15 @@ async function callLLM(openai: OpenAI, messages: Array<ChatCompletionMessagePara
         messages,
     });
 
-    console.log("Response from llm is");
-    console.log(chatCompletion.choices[0].message.content);
+    const colors = {
+        reset: '\x1b[0m',
+        bold: '\x1b[1m',
+        green: '\x1b[92m',
+        blue: '\x1b[94m'
+    };
+
+    console.log(colors.blue + colors.bold + "🧠 LLM Response:" + colors.reset);
+    console.log(colors.green + chatCompletion.choices[0].message.content + colors.reset);
 
     return chatCompletion.choices[0].message.content as string;
 }
@@ -38,7 +46,35 @@ function getActionString(response: string) {
 }
 
 export const agentWithLoop = async (query: string) => {
-    console.log(`user query is ${query}`)
+    const colors = {
+        reset: '\x1b[0m',
+        bold: '\x1b[1m',
+        blue: '\x1b[94m',
+        green: '\x1b[92m',
+        yellow: '\x1b[93m',
+        magenta: '\x1b[95m',
+        cyan: '\x1b[96m',
+        orange: '\x1b[38;5;208m'
+    };
+
+    // Display the prompts being sent to LLM
+    console.log('\n' + colors.cyan + colors.bold + '═'.repeat(80) + colors.reset);
+    console.log(colors.cyan + colors.bold + '🤖 LLM AGENT INTERACTION' + colors.reset);
+    console.log(colors.cyan + colors.bold + '═'.repeat(80) + colors.reset);
+
+    console.log('\n' + colors.orange + colors.bold + '📋 SYSTEM PROMPT' + colors.reset);
+    console.log(colors.orange + '┌─ System Instructions' + colors.reset);
+    const systemLines = systemPrompt.split('\n');
+    systemLines.forEach(line => {
+        console.log(colors.orange + '│  ' + line + colors.reset);
+    });
+    console.log(colors.orange + '└─' + colors.reset);
+
+    console.log('\n' + colors.blue + colors.bold + '💬 USER QUERY' + colors.reset);
+    console.log(colors.blue + '┌─ User Input' + colors.reset);
+    console.log(colors.blue + '│  ' + query + colors.reset);
+    console.log(colors.blue + '└─' + colors.reset);
+    
     let messages: Array<ChatCompletionMessageParam> = [
         {role: 'system', content: systemPrompt},
         {role: 'user', content: query}
@@ -49,8 +85,9 @@ export const agentWithLoop = async (query: string) => {
     });
 
     for (let i = 0; i < MAX_ITERATION; i++) {
-        console.log("***********************************")
-        console.log(`Iteration # ${i + 1}`)
+        console.log('\n' + colors.cyan + colors.bold + '═'.repeat(50) + colors.reset);
+        console.log(colors.cyan + colors.bold + `🔄 ITERATION ${i + 1}` + colors.reset);
+        console.log(colors.cyan + colors.bold + '═'.repeat(50) + colors.reset);
 
         const response = await callLLM(openai, messages);
         messages.push({role: 'assistant', content: response})
@@ -59,14 +96,15 @@ export const agentWithLoop = async (query: string) => {
             const actions = actionRegex.exec(foundActionStr) as Array<string>
             const [_, action, actionArg] = actions
 
-            console.log(`*********Agent Action : `)
-            console.log(`*********calling function: ${action} with argument ${actionArg}`)
+            console.log(colors.orange + colors.bold + `🎯 Agent Action:` + colors.reset)
+            console.log(colors.yellow + `   Function: ${action}` + colors.reset)
+            console.log(colors.yellow + `   Argument: ${actionArg}` + colors.reset)
 
             const observation = await availableFunctions[action](actionArg)
-            console.log(`******observation is ${observation}`)
+            console.log(colors.magenta + colors.bold + `👁️  Observation: ` + colors.reset + colors.green + observation + colors.reset)
             messages.push(({role: 'assistant', content: `Observation: ${observation}`}))
         } else {
-            console.log("Agent finished with Task")
+            ConsoleFormatter.displaySuccess("Agent finished with Task")
             return response
         }
     }
